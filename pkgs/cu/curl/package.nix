@@ -2,6 +2,8 @@
   package,
   pkgs,
   buildPkgs,
+  platform,
+  on,
 }:
 package {
   name = "curl";
@@ -17,6 +19,12 @@ package {
     CURL_CA_BUNDLE = "/etc/ssl/certs/ca-certificates.crt";
     CURL_CA_PATH = "/etc/ssl/certs";
     CURL_CA_SEARCH_SAFE = true;
+  }
+  // on (platform.os == "windows") {
+    # the Windows certificate store; a bundle path, even absent, fails every handshake
+    CURL_CA_NATIVE = true;
+    CURL_CA_BUNDLE = "none";
+    CURL_CA_PATH = "none";
   };
   tests.run = false; # needs perl + python impacket + minutes
   phases.after."cmake.install" = [
