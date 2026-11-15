@@ -6,6 +6,13 @@
 }:
 package {
   name = "qemu";
+  # not riscv64: clang 23.1.1 segfaults compiling target/arm/helper.c for it (LLVM bug)
+  platforms.cpu = [
+    "x86_64"
+    "aarch64"
+    "loongarch64"
+    "powerpc64le"
+  ];
   dependencies = [
     pkgs.glib
     pkgs.zlib
