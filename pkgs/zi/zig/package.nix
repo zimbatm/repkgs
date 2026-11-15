@@ -13,6 +13,9 @@ let
 in
 package {
   name = "zig";
+  # the recipe is linux's: ZIG_PIE, a <cpu>-linux-gnu.<glibc> cross triple, and the ELF interp and
+  # stub `prebuilt` implants into stage3
+  platforms.os = [ "linux" ];
   uses = [ "cmake" ];
   cmake.defs = {
     ZIG_SHARED_LLVM = true;
