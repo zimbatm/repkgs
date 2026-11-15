@@ -27,7 +27,9 @@ def main [platform: string, --remote (-r): string, ...attrs: string] {
     $"($p.1)/bin/($words.0)($exe) ($words | skip 1 | str join ' ') | grep -F ($spec.v | str replace -r '-r[0-9]+$' '')"
   })
   let tar = $"/tmp/target-test-($platform).tar.gz"
-  let pack = $"nix-store -qR ($outs | str join ' ') | grep -v -- '-debug$' | tar -C / -czf - -T -"
+  # -h: Git Bash's tar cannot create symlinks, and a windows closure can hold linux paths
+  # (llvm's host/llvm-config)
+  let pack = $"nix-store -qR ($outs | str join ' ') | grep -v -- '-debug$' | tar -h -C / -czf - -T -"
   ^bash -c (if $remote == null { $"($pack) > ($tar)" } else { $"ssh ($remote) ($pack | to json) > ($tar)" })
   let tag = "target-test"
   if (^gh release view $tag -R $REPO | complete).exit_code != 0 { ^gh release create $tag -R $REPO --prerelease --notes "payloads for .github/workflows/target-test.yaml" --title $tag }
